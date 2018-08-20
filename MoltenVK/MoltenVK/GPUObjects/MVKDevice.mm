@@ -435,6 +435,26 @@ void MVKPhysicalDevice::initFeatures() {
     }
 
 #endif
+  
+  // Need support adding for DirectX!
+  // DX9_1
+  _features.features.sampleRateShading = true;
+  _features.features.shaderCullDistance = true;
+  _features.features.robustBufferAccess = true;
+  
+  // DX9_3
+  _features.features.multiViewport = true;
+  
+  // DX10_1
+  _features.features.fullDrawIndexUint32 = true;
+  _features.features.geometryShader = true;
+  _features.features.logicOp = true;
+  _features.features.shaderImageGatherExtended = true;
+  
+  // DX11_0
+  _features.features.drawIndirectFirstInstance = true;
+  _features.features.tessellationShader = true;
+  _features.features.shaderStorageImageWriteWithoutFormat = true;
 }
 
 
