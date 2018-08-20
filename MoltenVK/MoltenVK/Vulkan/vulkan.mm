@@ -1584,6 +1584,260 @@ MVK_PUBLIC_SYMBOL VkResult vkGetPhysicalDeviceSurfacePresentModesKHR(
     return mvkPD->getSurfacePresentModes(mvkSrfc, pPresentModeCount, pPresentModes);
 }
 
+#pragma mark -
+#pragma mark VK_KHR_get_physical_device_properties2 extension
+
+ MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceFeatures2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkPhysicalDeviceFeatures2*                  pFeatures) {
+
+    MVKPhysicalDevice* mvkPD = MVKPhysicalDevice::getMVKPhysicalDevice(physicalDevice);
+    mvkPD->getFeatures2(pFeatures);
+ }
+
+ MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceProperties2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkPhysicalDeviceProperties2*                pProperties) {
+   
+    MVKPhysicalDevice* mvkPD = MVKPhysicalDevice::getMVKPhysicalDevice(physicalDevice);
+    mvkPD->getProperties2(pProperties);
+ }
+
+ MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceFormatProperties2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkFormat                                    format,
+    VkFormatProperties2*                        pFormatProperties) {
+   
+    MVKLogInfo("*** TODO *** vkGetPhysicalDeviceFormatProperties2KHR");
+ }
+
+ MVK_PUBLIC_SYMBOL VkResult vkGetPhysicalDeviceImageFormatProperties2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceImageFormatInfo2*     pImageFormatInfo,
+    VkImageFormatProperties2*                   pImageFormatProperties) {
+   
+    MVKLogInfo("*** TODO *** vkGetPhysicalDeviceImageFormatProperties2KHR");
+    return VK_SUCCESS;
+ }
+
+ MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceQueueFamilyProperties2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pQueueFamilyPropertyCount,
+    VkQueueFamilyProperties2*                   pQueueFamilyProperties) {
+   
+    MVKLogInfo("*** TODO *** vkGetPhysicalDeviceQueueFamilyProperties2KHR");
+ }
+
+ MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceMemoryProperties2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    VkPhysicalDeviceMemoryProperties2*          pMemoryProperties) {
+   
+    MVKLogInfo("*** TODO *** vkGetPhysicalDeviceMemoryProperties2KHR");
+ }
+
+ MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+    uint32_t*                                   pPropertyCount,
+    VkSparseImageFormatProperties2*             pProperties) {
+   
+    MVKLogInfo("*** TODO *** vkGetPhysicalDeviceSparseImageFormatProperties2KHR");
+ }
+
+MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceFeatures2(
+    VkPhysicalDevice                            physicalDevice,
+    VkPhysicalDeviceFeatures2*                  pFeatures) {
+  
+    vkGetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceProperties2(
+    VkPhysicalDevice                            physicalDevice,
+    VkPhysicalDeviceProperties2*                pProperties) {
+  
+    vkGetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceFormatProperties2(
+    VkPhysicalDevice                            physicalDevice,
+    VkFormat                                    format,
+    VkFormatProperties2*                        pFormatProperties) {
+  
+    vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
+}
+
+MVK_PUBLIC_SYMBOL VkResult vkGetPhysicalDeviceImageFormatProperties2(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceImageFormatInfo2*     pImageFormatInfo,
+    VkImageFormatProperties2*                   pImageFormatProperties) {
+  
+    return vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceQueueFamilyProperties2(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pQueueFamilyPropertyCount,
+    VkQueueFamilyProperties2*                   pQueueFamilyProperties) {
+  
+    vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceMemoryProperties2(
+    VkPhysicalDevice                            physicalDevice,
+    VkPhysicalDeviceMemoryProperties2*          pMemoryProperties) {
+  
+    vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetPhysicalDeviceSparseImageFormatProperties2(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+    uint32_t*                                   pPropertyCount,
+    VkSparseImageFormatProperties2*             pProperties) {
+  
+    vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
+}
+
+#pragma mark -
+#pragma mark dedicated allocation extensions
+
+#pragma mark -
+#pragma mark descriptor update template extensions
+
+MVK_PUBLIC_SYMBOL VkResult vkCreateDescriptorUpdateTemplateKHR(
+    VkDevice                                    device,
+    const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkDescriptorUpdateTemplate*                 pDescriptorUpdateTemplate) {
+  
+  MVKLogInfo("*** TODO *** vkCreateDescriptorUpdateTemplateKHR");
+  return VK_SUCCESS;
+}
+
+MVK_PUBLIC_SYMBOL void vkDestroyDescriptorUpdateTemplateKHR(
+    VkDevice                                    device,
+    VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
+    const VkAllocationCallbacks*                pAllocator) {
+  
+  MVKLogInfo("*** TODO *** vkDestroyDescriptorUpdateTemplateKHR");
+}
+
+MVK_PUBLIC_SYMBOL void vkUpdateDescriptorSetWithTemplateKHR(
+    VkDevice                                    device,
+    VkDescriptorSet                             descriptorSet,
+    VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
+    const void*                                 pData) {
+  
+  MVKLogInfo("*** TODO *** vkUpdateDescriptorSetWithTemplateKHR");
+}
+
+MVK_PUBLIC_SYMBOL VkResult vkCreateDescriptorUpdateTemplate(
+    VkDevice                                    device,
+    const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkDescriptorUpdateTemplate*                 pDescriptorUpdateTemplate) {
+  
+  return vkCreateDescriptorUpdateTemplateKHR(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
+}
+
+MVK_PUBLIC_SYMBOL void vkDestroyDescriptorUpdateTemplate(
+    VkDevice                                    device,
+    VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
+    const VkAllocationCallbacks*                pAllocator) {
+  
+  vkDestroyDescriptorUpdateTemplateKHR(device, descriptorUpdateTemplate, pAllocator);
+}
+
+MVK_PUBLIC_SYMBOL void vkUpdateDescriptorSetWithTemplate(
+    VkDevice                                    device,
+    VkDescriptorSet                             descriptorSet,
+    VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
+    const void*                                 pData) {
+  
+  vkUpdateDescriptorSetWithTemplateKHR(device, descriptorSet, descriptorUpdateTemplate, pData);
+}
+
+#pragma mark -
+#pragma mark get memory requirements 2 extensions
+
+MVK_PUBLIC_SYMBOL void vkGetImageMemoryRequirements2KHR(
+    VkDevice                                    device,
+    const VkImageMemoryRequirementsInfo2*       pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements) {
+  
+  MVKLogInfo("*** TODO *** vkGetImageMemoryRequirements2KHR");
+}
+
+MVK_PUBLIC_SYMBOL void vkGetBufferMemoryRequirements2KHR(
+    VkDevice                                    device,
+    const VkBufferMemoryRequirementsInfo2*      pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements) {
+  
+  MVKLogInfo("*** TODO *** vkGetBufferMemoryRequirements2KHR");
+}
+
+MVK_PUBLIC_SYMBOL void vkGetImageSparseMemoryRequirements2KHR(
+    VkDevice                                    device,
+    const VkImageSparseMemoryRequirementsInfo2* pInfo,
+    uint32_t*                                   pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements) {
+  
+  MVKLogInfo("*** TODO *** vkGetImageSparseMemoryRequirements2KHR");
+}
+
+MVK_PUBLIC_SYMBOL void vkGetImageMemoryRequirements2(
+    VkDevice                                    device,
+    const VkImageMemoryRequirementsInfo2*       pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements) {
+  
+    vkGetImageMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetBufferMemoryRequirements2(
+    VkDevice                                    device,
+    const VkBufferMemoryRequirementsInfo2*      pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements) {
+  
+    vkGetBufferMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
+}
+
+MVK_PUBLIC_SYMBOL void vkGetImageSparseMemoryRequirements2(
+    VkDevice                                    device,
+    const VkImageSparseMemoryRequirementsInfo2* pInfo,
+    uint32_t*                                   pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements) {
+  
+    vkGetImageSparseMemoryRequirements2KHR(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
+}
+
+#pragma mark -
+#pragma mark image format list extensions
+
+#pragma mark -
+#pragma mark maintenance 1 extensions
+
+VKAPI_ATTR void VKAPI_CALL vkTrimCommandPoolKHR(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    VkCommandPoolTrimFlags                      flags) {
+  
+    MVKLogInfo("*** TODO *** vkTrimCommandPoolKHR");
+}
+
+VKAPI_ATTR void VKAPI_CALL vkTrimCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    VkCommandPoolTrimFlags                      flags) {
+  
+    vkTrimCommandPoolKHR(device, commandPool, flags);
+}
+
+#pragma mark -
+#pragma mark maintenance 2 extensions
+
+#pragma mark -
+#pragma mark shader draw parameters extensions
+
 
 #pragma mark -
 #pragma mark iOS & macOS surface extensions

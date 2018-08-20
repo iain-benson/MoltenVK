@@ -92,6 +92,11 @@ MVKLayer::MVKLayer() {
     extTmplt.specVersion = VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_SPEC_VERSION;
     _extensions.push_back(extTmplt);
 
+    memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+    strcpy(extTmplt.extensionName, VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+    extTmplt.specVersion = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_SPEC_VERSION;
+    _extensions.push_back(extTmplt);
+
 #if MVK_IOS
     memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
 	strcpy(extTmplt.extensionName, VK_MVK_IOS_SURFACE_EXTENSION_NAME);
@@ -109,6 +114,42 @@ MVKLayer::MVKLayer() {
     extTmplt.specVersion = VK_MVK_MACOS_SURFACE_SPEC_VERSION;
 	_extensions.push_back(extTmplt);
 #endif
+
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_DEDICATED_ALLOCATION_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_GET_MEMORY_REQUIREMENTS_2_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_IMAGE_FORMAT_LIST_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_MAINTENANCE1_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_MAINTENANCE1_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_MAINTENANCE2_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_MAINTENANCE2_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
+
+  memset(extTmplt.extensionName, 0, sizeof(extTmplt.extensionName));
+  strcpy(extTmplt.extensionName, VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
+  extTmplt.specVersion = VK_KHR_SHADER_DRAW_PARAMETERS_SPEC_VERSION;
+  _extensions.push_back(extTmplt);
 }
 
 

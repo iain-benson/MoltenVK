@@ -252,6 +252,32 @@ void MVKInstance::initProcAddrs() {
     ADD_PROC_ADDR(vkGetMTLTextureMVK);
     ADD_PROC_ADDR(vkUseIOSurfaceMVK);
     ADD_PROC_ADDR(vkGetIOSurfaceMVK);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceFeatures2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceProperties2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceFormatProperties2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceImageFormatProperties2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceQueueFamilyProperties2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceMemoryProperties2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceSparseImageFormatProperties2KHR);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceFeatures2);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceProperties2);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceFormatProperties2);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceImageFormatProperties2);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceQueueFamilyProperties2);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceMemoryProperties2);
+  ADD_PROC_ADDR(vkGetPhysicalDeviceSparseImageFormatProperties2);
+  ADD_PROC_ADDR(vkCreateDescriptorUpdateTemplateKHR);
+  ADD_PROC_ADDR(vkDestroyDescriptorUpdateTemplateKHR);
+  ADD_PROC_ADDR(vkUpdateDescriptorSetWithTemplateKHR);
+  ADD_PROC_ADDR(vkCreateDescriptorUpdateTemplate);
+  ADD_PROC_ADDR(vkDestroyDescriptorUpdateTemplate);
+  ADD_PROC_ADDR(vkUpdateDescriptorSetWithTemplate);
+  ADD_PROC_ADDR(vkGetImageMemoryRequirements2KHR);
+  ADD_PROC_ADDR(vkGetBufferMemoryRequirements2KHR);
+  ADD_PROC_ADDR(vkGetImageSparseMemoryRequirements2KHR);
+  ADD_PROC_ADDR(vkGetImageMemoryRequirements2);
+  ADD_PROC_ADDR(vkGetBufferMemoryRequirements2);
+  ADD_PROC_ADDR(vkGetImageSparseMemoryRequirements2);
 
 #ifdef VK_USE_PLATFORM_IOS_MVK
 	ADD_PROC_ADDR(vkCreateIOSSurfaceMVK);

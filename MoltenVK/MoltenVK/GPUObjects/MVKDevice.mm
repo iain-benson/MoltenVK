@@ -55,7 +55,11 @@ using namespace std;
 #pragma mark MVKPhysicalDevice
 
 void MVKPhysicalDevice::getFeatures(VkPhysicalDeviceFeatures* features) {
-    if (features) { *features = _features; }
+    if (features) { *features = _features.features; }
+}
+
+void MVKPhysicalDevice::getFeatures2(VkPhysicalDeviceFeatures2* features) {
+  if (features) { *features = _features; }
 }
 
 void MVKPhysicalDevice::getMetalFeatures(MVKPhysicalDeviceMetalFeatures* mtlFeatures) {
@@ -63,7 +67,11 @@ void MVKPhysicalDevice::getMetalFeatures(MVKPhysicalDeviceMetalFeatures* mtlFeat
 }
 
 void MVKPhysicalDevice::getProperties(VkPhysicalDeviceProperties* properties) {
-    if (properties) { *properties = _properties; }
+    if (properties) { *properties = _properties.properties; }
+}
+
+void MVKPhysicalDevice::getProperties2(VkPhysicalDeviceProperties2* properties) {
+  if (properties) { *properties = _properties; }
 }
 
 bool MVKPhysicalDevice::getFormatIsSupported(VkFormat format) {
@@ -102,7 +110,7 @@ VkResult MVKPhysicalDevice::getImageFormatProperties(VkFormat format,
 
 	if ( !pImageFormatProperties ) { return VK_SUCCESS; }
 
-    VkPhysicalDeviceLimits* pLimits = &_properties.limits;
+    VkPhysicalDeviceLimits* pLimits = &_properties.properties.limits;
     VkExtent3D maxExt;
     uint32_t maxLayers;
 	uint32_t maxLevels;
@@ -384,42 +392,46 @@ void MVKPhysicalDevice::initMetalFeatures() {
 
 /** Initializes the physical device features of this instance. */
 void MVKPhysicalDevice::initFeatures() {
-	memset(&_features, 0, sizeof(_features));	// Start with everything cleared
+	memset(&_features.features, 0, sizeof(_features.features));	// Start with everything cleared
 
-    _features.independentBlend = true;
-    _features.depthBiasClamp = true;
-    _features.fillModeNonSolid = true;
-    _features.largePoints = true;
-    _features.alphaToOne = true;
-    _features.samplerAnisotropy = true;
-    _features.shaderImageGatherExtended = true;
-    _features.shaderStorageImageExtendedFormats = true;
-    _features.shaderClipDistance = true;
-    _features.shaderInt16 = true;
-	_features.multiDrawIndirect = true;
+  
+    _features.pNext = nullptr;
+    _features.sType = VkStructureType::VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+  
+    _features.features.independentBlend = true;
+    _features.features.depthBiasClamp = true;
+    _features.features.fillModeNonSolid = true;
+    _features.features.largePoints = true;
+    _features.features.alphaToOne = true;
+    _features.features.samplerAnisotropy = true;
+    _features.features.shaderImageGatherExtended = true;
+    _features.features.shaderStorageImageExtendedFormats = true;
+    _features.features.shaderClipDistance = true;
+    _features.features.shaderInt16 = true;
+	  _features.features.multiDrawIndirect = true;
 
 #if MVK_IOS
-    _features.textureCompressionETC2 = true;
+    _features.features.textureCompressionETC2 = true;
 
     if ( [_mtlDevice supportsFeatureSet: MTLFeatureSet_iOS_GPUFamily2_v1] ) {
-        _features.textureCompressionASTC_LDR = true;
+        _features.features.textureCompressionASTC_LDR = true;
     }
 
     if ( [_mtlDevice supportsFeatureSet: MTLFeatureSet_iOS_GPUFamily3_v1] ) {
-        _features.occlusionQueryPrecise = true;
+        _features.features.occlusionQueryPrecise = true;
     }
 #endif
 
 #if MVK_MACOS
-    _features.textureCompressionBC = true;
-    _features.occlusionQueryPrecise = true;
-    _features.imageCubeArray = true;
-    _features.depthClamp = true;
-    _features.vertexPipelineStoresAndAtomics = true;
-    _features.fragmentStoresAndAtomics = true;
+    _features.features.textureCompressionBC = true;
+    _features.features.occlusionQueryPrecise = true;
+    _features.features.imageCubeArray = true;
+    _features.features.depthClamp = true;
+    _features.features.vertexPipelineStoresAndAtomics = true;
+    _features.features.fragmentStoresAndAtomics = true;
 
     if ( [_mtlDevice supportsFeatureSet: MTLFeatureSet_macOS_GPUFamily1_v2] ) {
-        _features.dualSrcBlend = true;
+        _features.features.dualSrcBlend = true;
     }
 
 #endif
@@ -488,208 +500,211 @@ void MVKPhysicalDevice::initFeatures() {
 
 /** Initializes the physical device properties of this instance. */
 void MVKPhysicalDevice::initProperties() {
-	memset(&_properties, 0, sizeof(_properties));	// Start with everything cleared
+	memset(&_properties.properties, 0, sizeof(_properties.properties));	// Start with everything cleared
 
-	_properties.apiVersion = MVK_VULKAN_API_VERSION;
-	_properties.driverVersion = MVK_VERSION;
+  _properties.pNext = nullptr;
+  _properties.sType = VkStructureType::VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
 
-	mvkPopulateGPUInfo(_properties, _mtlDevice);
+	_properties.properties.apiVersion = MVK_VULKAN_API_VERSION;
+	_properties.properties.driverVersion = MVK_VERSION;
+
+	mvkPopulateGPUInfo(_properties.properties, _mtlDevice);
 	initPipelineCacheUUID();
 
 	// Limits
 #if MVK_IOS
     if ( [_mtlDevice supportsFeatureSet: MTLFeatureSet_iOS_GPUFamily2_v1] ) {
-        _properties.limits.maxColorAttachments = 8;
+        _properties.properties.limits.maxColorAttachments = 8;
     } else {
-        _properties.limits.maxColorAttachments = 4;
+        _properties.properties.limits.maxColorAttachments = 4;
     }
 #endif
 #if MVK_MACOS
-    _properties.limits.maxColorAttachments = 8;
+    _properties.properties.limits.maxColorAttachments = 8;
 #endif
 
-    _properties.limits.maxFragmentOutputAttachments = _properties.limits.maxColorAttachments;
-    _properties.limits.maxFragmentDualSrcAttachments = _properties.limits.maxFragmentOutputAttachments;
+    _properties.properties.limits.maxFragmentOutputAttachments = _properties.properties.limits.maxColorAttachments;
+    _properties.properties.limits.maxFragmentDualSrcAttachments = _properties.properties.limits.maxFragmentOutputAttachments;
 
-	_properties.limits.framebufferColorSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.framebufferDepthSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.framebufferStencilSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.framebufferNoAttachmentsSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.sampledImageColorSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.sampledImageIntegerSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.sampledImageDepthSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.sampledImageStencilSampleCounts = _metalFeatures.supportedSampleCounts;
-	_properties.limits.storageImageSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.framebufferColorSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.framebufferDepthSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.framebufferStencilSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.framebufferNoAttachmentsSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.sampledImageColorSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.sampledImageIntegerSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.sampledImageDepthSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.sampledImageStencilSampleCounts = _metalFeatures.supportedSampleCounts;
+	_properties.properties.limits.storageImageSampleCounts = _metalFeatures.supportedSampleCounts;
 
-	_properties.limits.maxImageDimension1D = _metalFeatures.maxTextureDimension;
-	_properties.limits.maxImageDimension2D = _metalFeatures.maxTextureDimension;
-	_properties.limits.maxImageDimensionCube = _metalFeatures.maxTextureDimension;
-	_properties.limits.maxFramebufferWidth = _metalFeatures.maxTextureDimension;
-	_properties.limits.maxFramebufferHeight = _metalFeatures.maxTextureDimension;
-	_properties.limits.maxFramebufferLayers = 256;
+	_properties.properties.limits.maxImageDimension1D = _metalFeatures.maxTextureDimension;
+	_properties.properties.limits.maxImageDimension2D = _metalFeatures.maxTextureDimension;
+	_properties.properties.limits.maxImageDimensionCube = _metalFeatures.maxTextureDimension;
+	_properties.properties.limits.maxFramebufferWidth = _metalFeatures.maxTextureDimension;
+	_properties.properties.limits.maxFramebufferHeight = _metalFeatures.maxTextureDimension;
+	_properties.properties.limits.maxFramebufferLayers = 256;
 
-    _properties.limits.maxViewportDimensions[0] = _metalFeatures.maxTextureDimension;
-    _properties.limits.maxViewportDimensions[1] = _metalFeatures.maxTextureDimension;
-    float maxVPDim = max(_properties.limits.maxViewportDimensions[0], _properties.limits.maxViewportDimensions[1]);
-    _properties.limits.viewportBoundsRange[0] = (-2.0 * maxVPDim);
-    _properties.limits.viewportBoundsRange[1] = (2.0 * maxVPDim) - 1;
+    _properties.properties.limits.maxViewportDimensions[0] = _metalFeatures.maxTextureDimension;
+    _properties.properties.limits.maxViewportDimensions[1] = _metalFeatures.maxTextureDimension;
+    float maxVPDim = max(_properties.properties.limits.maxViewportDimensions[0], _properties.properties.limits.maxViewportDimensions[1]);
+    _properties.properties.limits.viewportBoundsRange[0] = (-2.0 * maxVPDim);
+    _properties.properties.limits.viewportBoundsRange[1] = (2.0 * maxVPDim) - 1;
 
-	_properties.limits.maxImageDimension3D = (2 * KIBI);
-	_properties.limits.maxImageArrayLayers = (2 * KIBI);
-	_properties.limits.maxViewports = 1;
-	_properties.limits.maxSamplerAnisotropy = 16;
+	_properties.properties.limits.maxImageDimension3D = (2 * KIBI);
+	_properties.properties.limits.maxImageArrayLayers = (2 * KIBI);
+	_properties.properties.limits.maxViewports = 1;
+	_properties.properties.limits.maxSamplerAnisotropy = 16;
 
-    _properties.limits.maxVertexInputAttributes = 31;
-    _properties.limits.maxVertexInputBindings = 31;
+    _properties.properties.limits.maxVertexInputAttributes = 31;
+    _properties.properties.limits.maxVertexInputBindings = 31;
 
-    _properties.limits.maxVertexInputAttributeOffset = (4 * KIBI);
-    _properties.limits.maxVertexInputBindingStride = _properties.limits.maxVertexInputAttributeOffset - 1;
+    _properties.properties.limits.maxVertexInputAttributeOffset = (4 * KIBI);
+    _properties.properties.limits.maxVertexInputBindingStride = _properties.properties.limits.maxVertexInputAttributeOffset - 1;
 
-	_properties.limits.maxPerStageDescriptorSamplers = _metalFeatures.maxPerStageSamplerCount;
-	_properties.limits.maxPerStageDescriptorUniformBuffers = _metalFeatures.maxPerStageBufferCount;
-	_properties.limits.maxPerStageDescriptorStorageBuffers = _metalFeatures.maxPerStageBufferCount;
-	_properties.limits.maxPerStageDescriptorSampledImages = _metalFeatures.maxPerStageTextureCount;
-	_properties.limits.maxPerStageDescriptorStorageImages = _metalFeatures.maxPerStageTextureCount;
-	_properties.limits.maxPerStageDescriptorInputAttachments = _metalFeatures.maxPerStageTextureCount;
+	_properties.properties.limits.maxPerStageDescriptorSamplers = _metalFeatures.maxPerStageSamplerCount;
+	_properties.properties.limits.maxPerStageDescriptorUniformBuffers = _metalFeatures.maxPerStageBufferCount;
+	_properties.properties.limits.maxPerStageDescriptorStorageBuffers = _metalFeatures.maxPerStageBufferCount;
+	_properties.properties.limits.maxPerStageDescriptorSampledImages = _metalFeatures.maxPerStageTextureCount;
+	_properties.properties.limits.maxPerStageDescriptorStorageImages = _metalFeatures.maxPerStageTextureCount;
+	_properties.properties.limits.maxPerStageDescriptorInputAttachments = _metalFeatures.maxPerStageTextureCount;
 
-    _properties.limits.maxPerStageResources = (_metalFeatures.maxPerStageBufferCount + _metalFeatures.maxPerStageTextureCount);
-    _properties.limits.maxFragmentCombinedOutputResources = _properties.limits.maxPerStageResources;
+    _properties.properties.limits.maxPerStageResources = (_metalFeatures.maxPerStageBufferCount + _metalFeatures.maxPerStageTextureCount);
+    _properties.properties.limits.maxFragmentCombinedOutputResources = _properties.properties.limits.maxPerStageResources;
 
-	_properties.limits.maxDescriptorSetSamplers = (_properties.limits.maxPerStageDescriptorSamplers * 2);
-	_properties.limits.maxDescriptorSetUniformBuffers = (_properties.limits.maxPerStageDescriptorUniformBuffers * 2);
-	_properties.limits.maxDescriptorSetUniformBuffersDynamic = (_properties.limits.maxPerStageDescriptorUniformBuffers * 2);
-	_properties.limits.maxDescriptorSetStorageBuffers = (_properties.limits.maxPerStageDescriptorStorageBuffers * 2);
-	_properties.limits.maxDescriptorSetStorageBuffersDynamic = (_properties.limits.maxPerStageDescriptorStorageBuffers * 2);
-	_properties.limits.maxDescriptorSetSampledImages = (_properties.limits.maxPerStageDescriptorSampledImages * 2);
-	_properties.limits.maxDescriptorSetStorageImages = (_properties.limits.maxPerStageDescriptorStorageImages * 2);
-	_properties.limits.maxDescriptorSetInputAttachments = (_properties.limits.maxPerStageDescriptorInputAttachments * 2);
+	_properties.properties.limits.maxDescriptorSetSamplers = (_properties.properties.limits.maxPerStageDescriptorSamplers * 2);
+	_properties.properties.limits.maxDescriptorSetUniformBuffers = (_properties.properties.limits.maxPerStageDescriptorUniformBuffers * 2);
+	_properties.properties.limits.maxDescriptorSetUniformBuffersDynamic = (_properties.properties.limits.maxPerStageDescriptorUniformBuffers * 2);
+	_properties.properties.limits.maxDescriptorSetStorageBuffers = (_properties.properties.limits.maxPerStageDescriptorStorageBuffers * 2);
+	_properties.properties.limits.maxDescriptorSetStorageBuffersDynamic = (_properties.properties.limits.maxPerStageDescriptorStorageBuffers * 2);
+	_properties.properties.limits.maxDescriptorSetSampledImages = (_properties.properties.limits.maxPerStageDescriptorSampledImages * 2);
+	_properties.properties.limits.maxDescriptorSetStorageImages = (_properties.properties.limits.maxPerStageDescriptorStorageImages * 2);
+	_properties.properties.limits.maxDescriptorSetInputAttachments = (_properties.properties.limits.maxPerStageDescriptorInputAttachments * 2);
 
-	_properties.limits.maxTexelBufferElements = _properties.limits.maxImageDimension2D * _properties.limits.maxImageDimension2D;
-	_properties.limits.maxUniformBufferRange = (uint32_t)_metalFeatures.maxMTLBufferSize;
-	_properties.limits.maxStorageBufferRange = (uint32_t)_metalFeatures.maxMTLBufferSize;
-	_properties.limits.maxPushConstantsSize = (4 * KIBI);
+	_properties.properties.limits.maxTexelBufferElements = _properties.properties.limits.maxImageDimension2D * _properties.properties.limits.maxImageDimension2D;
+	_properties.properties.limits.maxUniformBufferRange = (uint32_t)_metalFeatures.maxMTLBufferSize;
+	_properties.properties.limits.maxStorageBufferRange = (uint32_t)_metalFeatures.maxMTLBufferSize;
+	_properties.properties.limits.maxPushConstantsSize = (4 * KIBI);
 
-    _properties.limits.minMemoryMapAlignment = _metalFeatures.mtlBufferAlignment;
-    _properties.limits.minTexelBufferOffsetAlignment = _metalFeatures.mtlBufferAlignment;
-    _properties.limits.minUniformBufferOffsetAlignment = _metalFeatures.mtlBufferAlignment;
-    _properties.limits.minStorageBufferOffsetAlignment = _metalFeatures.mtlBufferAlignment;
-    _properties.limits.bufferImageGranularity = _metalFeatures.mtlBufferAlignment;
-    _properties.limits.nonCoherentAtomSize = _metalFeatures.mtlBufferAlignment;
+    _properties.properties.limits.minMemoryMapAlignment = _metalFeatures.mtlBufferAlignment;
+    _properties.properties.limits.minTexelBufferOffsetAlignment = _metalFeatures.mtlBufferAlignment;
+    _properties.properties.limits.minUniformBufferOffsetAlignment = _metalFeatures.mtlBufferAlignment;
+    _properties.properties.limits.minStorageBufferOffsetAlignment = _metalFeatures.mtlBufferAlignment;
+    _properties.properties.limits.bufferImageGranularity = _metalFeatures.mtlBufferAlignment;
+    _properties.properties.limits.nonCoherentAtomSize = _metalFeatures.mtlBufferAlignment;
 
 #if MVK_IOS
-    _properties.limits.maxFragmentInputComponents = 60;
+    _properties.properties.limits.maxFragmentInputComponents = 60;
 
     if ([_mtlDevice supportsFeatureSet: MTLFeatureSet_iOS_GPUFamily3_v1]) {
-        _properties.limits.optimalBufferCopyOffsetAlignment = 16;
+        _properties.properties.limits.optimalBufferCopyOffsetAlignment = 16;
     } else {
-        _properties.limits.optimalBufferCopyOffsetAlignment = 64;
+        _properties.properties.limits.optimalBufferCopyOffsetAlignment = 64;
     }
 #endif
 #if MVK_MACOS
-    _properties.limits.maxFragmentInputComponents = 128;
-    _properties.limits.optimalBufferCopyOffsetAlignment = 256;
+    _properties.properties.limits.maxFragmentInputComponents = 128;
+    _properties.properties.limits.optimalBufferCopyOffsetAlignment = 256;
 #endif
 
-    _properties.limits.maxVertexOutputComponents = _properties.limits.maxFragmentInputComponents;
+    _properties.properties.limits.maxVertexOutputComponents = _properties.properties.limits.maxFragmentInputComponents;
 
-    _properties.limits.optimalBufferCopyRowPitchAlignment = 1;
+    _properties.properties.limits.optimalBufferCopyRowPitchAlignment = 1;
 
-	_properties.limits.timestampComputeAndGraphics = VK_TRUE;
-	_properties.limits.timestampPeriod = mvkGetTimestampPeriod();
+	_properties.properties.limits.timestampComputeAndGraphics = VK_TRUE;
+	_properties.properties.limits.timestampPeriod = mvkGetTimestampPeriod();
 
-    _properties.limits.pointSizeRange[0] = 1;
-    _properties.limits.pointSizeRange[1] = 511;
-    _properties.limits.pointSizeGranularity = 1;
-    _properties.limits.lineWidthRange[0] = 1;
-    _properties.limits.lineWidthRange[1] = 1;
-    _properties.limits.pointSizeGranularity = 1;
+    _properties.properties.limits.pointSizeRange[0] = 1;
+    _properties.properties.limits.pointSizeRange[1] = 511;
+    _properties.properties.limits.pointSizeGranularity = 1;
+    _properties.properties.limits.lineWidthRange[0] = 1;
+    _properties.properties.limits.lineWidthRange[1] = 1;
+    _properties.properties.limits.pointSizeGranularity = 1;
 
-    _properties.limits.standardSampleLocations = VK_FALSE;
-    _properties.limits.strictLines = VK_FALSE;
+    _properties.properties.limits.standardSampleLocations = VK_FALSE;
+    _properties.properties.limits.strictLines = VK_FALSE;
 
 	VkExtent3D wgSize = mvkVkExtent3DFromMTLSize(_mtlDevice.maxThreadsPerThreadgroup);
-	_properties.limits.maxComputeWorkGroupSize[0] = wgSize.width;
-	_properties.limits.maxComputeWorkGroupSize[1] = wgSize.height;
-	_properties.limits.maxComputeWorkGroupSize[2] = wgSize.depth;
-	_properties.limits.maxComputeWorkGroupInvocations = max({wgSize.width, wgSize.height, wgSize.depth});
+	_properties.properties.limits.maxComputeWorkGroupSize[0] = wgSize.width;
+	_properties.properties.limits.maxComputeWorkGroupSize[1] = wgSize.height;
+	_properties.properties.limits.maxComputeWorkGroupSize[2] = wgSize.depth;
+	_properties.properties.limits.maxComputeWorkGroupInvocations = max({wgSize.width, wgSize.height, wgSize.depth});
 
 	if ( [_mtlDevice respondsToSelector: @selector(maxThreadgroupMemoryLength)] ) {
-		_properties.limits.maxComputeSharedMemorySize = (uint32_t)_mtlDevice.maxThreadgroupMemoryLength;
+		_properties.properties.limits.maxComputeSharedMemorySize = (uint32_t)_mtlDevice.maxThreadgroupMemoryLength;
 	} else {
 #if MVK_IOS
 		if ([_mtlDevice supportsFeatureSet: MTLFeatureSet_iOS_GPUFamily4_v1]) {
-			_properties.limits.maxComputeSharedMemorySize = (32 * KIBI);
+			_properties.properties.limits.maxComputeSharedMemorySize = (32 * KIBI);
 		} else if ([_mtlDevice supportsFeatureSet: MTLFeatureSet_iOS_GPUFamily3_v1]) {
-			_properties.limits.maxComputeSharedMemorySize = (16 * KIBI);
+			_properties.properties.limits.maxComputeSharedMemorySize = (16 * KIBI);
 		} else {
-			_properties.limits.maxComputeSharedMemorySize = ((16 * KIBI) - 32);
+			_properties.properties.limits.maxComputeSharedMemorySize = ((16 * KIBI) - 32);
 		}
 #endif
 #if MVK_MACOS
-		_properties.limits.maxComputeSharedMemorySize = (32 * KIBI);
+		_properties.properties.limits.maxComputeSharedMemorySize = (32 * KIBI);
 #endif
 	}
 
     // Features with no specific limits - default to unlimited int values
 
-    _properties.limits.maxMemoryAllocationCount = kMVKUndefinedLargeUInt32;
-    _properties.limits.maxSamplerAllocationCount = kMVKUndefinedLargeUInt32;
-    _properties.limits.maxBoundDescriptorSets = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxMemoryAllocationCount = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxSamplerAllocationCount = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxBoundDescriptorSets = kMVKUndefinedLargeUInt32;
 
-    _properties.limits.maxComputeWorkGroupCount[0] = kMVKUndefinedLargeUInt32;
-    _properties.limits.maxComputeWorkGroupCount[1] = kMVKUndefinedLargeUInt32;
-    _properties.limits.maxComputeWorkGroupCount[2] = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxComputeWorkGroupCount[0] = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxComputeWorkGroupCount[1] = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxComputeWorkGroupCount[2] = kMVKUndefinedLargeUInt32;
 
-    _properties.limits.maxDrawIndexedIndexValue = numeric_limits<uint32_t>::max() - 1;
-    _properties.limits.maxDrawIndirectCount = kMVKUndefinedLargeUInt32;
+    _properties.properties.limits.maxDrawIndexedIndexValue = numeric_limits<uint32_t>::max() - 1;
+    _properties.properties.limits.maxDrawIndirectCount = kMVKUndefinedLargeUInt32;
 
-    _properties.limits.minTexelOffset = -8;
-    _properties.limits.maxTexelOffset = 7;
-    _properties.limits.minTexelGatherOffset = _properties.limits.minTexelOffset;
-    _properties.limits.maxTexelGatherOffset = _properties.limits.maxTexelOffset;
+    _properties.properties.limits.minTexelOffset = -8;
+    _properties.properties.limits.maxTexelOffset = 7;
+    _properties.properties.limits.minTexelGatherOffset = _properties.properties.limits.minTexelOffset;
+    _properties.properties.limits.maxTexelGatherOffset = _properties.properties.limits.maxTexelOffset;
 
-    _properties.limits.maxClipDistances = kMVKUndefinedLargeUInt32;
-	_properties.limits.maxCullDistances = 0;	// unsupported
-    _properties.limits.maxCombinedClipAndCullDistances = _properties.limits.maxClipDistances +
-														 _properties.limits.maxCullDistances;
+    _properties.properties.limits.maxClipDistances = kMVKUndefinedLargeUInt32;
+	_properties.properties.limits.maxCullDistances = 0;	// unsupported
+    _properties.properties.limits.maxCombinedClipAndCullDistances = _properties.properties.limits.maxClipDistances +
+														 _properties.properties.limits.maxCullDistances;
 
 
     // Features with unknown limits - default to Vulkan required limits
     
-    _properties.limits.subPixelPrecisionBits = 4;
-    _properties.limits.subTexelPrecisionBits = 4;
-    _properties.limits.mipmapPrecisionBits = 4;
-    _properties.limits.viewportSubPixelBits = 0;
+    _properties.properties.limits.subPixelPrecisionBits = 4;
+    _properties.properties.limits.subTexelPrecisionBits = 4;
+    _properties.properties.limits.mipmapPrecisionBits = 4;
+    _properties.properties.limits.viewportSubPixelBits = 0;
 
-    _properties.limits.maxSamplerLodBias = 2;
+    _properties.properties.limits.maxSamplerLodBias = 2;
 
-    _properties.limits.maxSampleMaskWords = 1;
+    _properties.properties.limits.maxSampleMaskWords = 1;
 
-    _properties.limits.discreteQueuePriorities = 2;
+    _properties.properties.limits.discreteQueuePriorities = 2;
 
 
     // Unsupported features - set to zeros generally
 
-    _properties.limits.sparseAddressSpaceSize = 0;
+    _properties.properties.limits.sparseAddressSpaceSize = 0;
 
-    _properties.limits.maxTessellationGenerationLevel = 0;
-    _properties.limits.maxTessellationPatchSize = 0;
-    _properties.limits.maxTessellationControlPerVertexInputComponents = 0;
-    _properties.limits.maxTessellationControlPerVertexOutputComponents = 0;
-    _properties.limits.maxTessellationControlPerPatchOutputComponents = 0;
-    _properties.limits.maxTessellationControlTotalOutputComponents = 0;
-    _properties.limits.maxTessellationEvaluationInputComponents = 0;
-    _properties.limits.maxTessellationEvaluationOutputComponents = 0;
+    _properties.properties.limits.maxTessellationGenerationLevel = 0;
+    _properties.properties.limits.maxTessellationPatchSize = 0;
+    _properties.properties.limits.maxTessellationControlPerVertexInputComponents = 0;
+    _properties.properties.limits.maxTessellationControlPerVertexOutputComponents = 0;
+    _properties.properties.limits.maxTessellationControlPerPatchOutputComponents = 0;
+    _properties.properties.limits.maxTessellationControlTotalOutputComponents = 0;
+    _properties.properties.limits.maxTessellationEvaluationInputComponents = 0;
+    _properties.properties.limits.maxTessellationEvaluationOutputComponents = 0;
 
-    _properties.limits.maxGeometryShaderInvocations = 0;
-    _properties.limits.maxGeometryInputComponents = 0;
-    _properties.limits.maxGeometryOutputComponents = 0;
-    _properties.limits.maxGeometryOutputVertices = 0;
-    _properties.limits.maxGeometryTotalOutputComponents = 0;
+    _properties.properties.limits.maxGeometryShaderInvocations = 0;
+    _properties.properties.limits.maxGeometryInputComponents = 0;
+    _properties.properties.limits.maxGeometryOutputComponents = 0;
+    _properties.properties.limits.maxGeometryOutputVertices = 0;
+    _properties.properties.limits.maxGeometryTotalOutputComponents = 0;
 
-    _properties.limits.minInterpolationOffset = 0.0;
-    _properties.limits.maxInterpolationOffset = 0.0;
-    _properties.limits.subPixelInterpolationOffsetBits = 0;
+    _properties.properties.limits.minInterpolationOffset = 0.0;
+    _properties.properties.limits.maxInterpolationOffset = 0.0;
+    _properties.properties.limits.subPixelInterpolationOffsetBits = 0;
 }
 
 
@@ -815,10 +830,10 @@ void MVKPhysicalDevice::initProperties() {
 
 
 void MVKPhysicalDevice::initPipelineCacheUUID() {
-	size_t uuidSize = sizeof(_properties.pipelineCacheUUID);
+	size_t uuidSize = sizeof(_properties.properties.pipelineCacheUUID);
 
 	// Clear the UUID
-	memset(&_properties.pipelineCacheUUID, 0, uuidSize);
+	memset(&_properties.properties.pipelineCacheUUID, 0, uuidSize);
 
 	uint32_t uuidComponent;
 	size_t uuidComponentSize = sizeof(uint32_t);
@@ -828,12 +843,12 @@ void MVKPhysicalDevice::initPipelineCacheUUID() {
 	// Lower 4 bytes contains MoltenVK version
 	uuidComponent = MVK_VERSION;
 	uuidComponentOffset -= uuidComponentSize;
-	*(uint32_t*)&_properties.pipelineCacheUUID[uuidComponentOffset] = NSSwapHostIntToBig(uuidComponent);
+	*(uint32_t*)&_properties.properties.pipelineCacheUUID[uuidComponentOffset] = NSSwapHostIntToBig(uuidComponent);
 
 	// Next 4 bytes contains hightest Metal feature set supported by this device
 	uuidComponent = (uint32_t)getHighestMTLFeatureSet();
 	uuidComponentOffset -= uuidComponentSize;
-	*(uint32_t*)&_properties.pipelineCacheUUID[uuidComponentOffset] = NSSwapHostIntToBig(uuidComponent);
+	*(uint32_t*)&_properties.properties.pipelineCacheUUID[uuidComponentOffset] = NSSwapHostIntToBig(uuidComponent);
 }
 
 MTLFeatureSet MVKPhysicalDevice::getHighestMTLFeatureSet() {
@@ -911,7 +926,7 @@ void MVKPhysicalDevice::initMemoryProperties() {
 
 void MVKPhysicalDevice::logGPUInfo() {
 	string devTypeStr;
-	switch (_properties.deviceType) {
+	switch (_properties.properties.deviceType) {
 		case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
 			devTypeStr = "Discrete";
 			break;
@@ -961,8 +976,8 @@ void MVKPhysicalDevice::logGPUInfo() {
     if ( [_mtlDevice supportsFeatureSet: MTLFeatureSet_macOS_GPUFamily1_v1] ) { fsMsg += "\n\t\tmacOS GPU Family 1 v1"; }
 #endif
 
-	MVKLogInfo(fsMsg.c_str(), _properties.deviceName, devTypeStr.c_str(), _properties.vendorID, _properties.deviceID,
-			   [[[NSUUID alloc] initWithUUIDBytes: _properties.pipelineCacheUUID] autorelease].UUIDString.UTF8String);
+	MVKLogInfo(fsMsg.c_str(), _properties.properties.deviceName, devTypeStr.c_str(), _properties.properties.vendorID, _properties.properties.deviceID,
+			   [[[NSUUID alloc] initWithUUIDBytes: _properties.properties.pipelineCacheUUID] autorelease].UUIDString.UTF8String);
 }
 
 /** Initializes the queue families supported by this instance. */
@@ -1449,9 +1464,9 @@ MVKDevice::MVKDevice(MVKPhysicalDevice* physicalDevice, const VkDeviceCreateInfo
 	initPerformanceTracking();
 
 	_physicalDevice = physicalDevice;
-	_pFeatures = &_physicalDevice->_features;
+	_pFeatures = &_physicalDevice->_features.features;
 	_pMetalFeatures = &_physicalDevice->_metalFeatures;
-	_pProperties = &_physicalDevice->_properties;
+	_pProperties = &_physicalDevice->_properties.properties;
 	_pMemoryProperties = &_physicalDevice->_memoryProperties;
 
     // Init const config. Use a pointer to bypass the const qualifier.

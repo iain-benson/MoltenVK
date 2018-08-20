@@ -75,11 +75,17 @@ public:
 	/** Populates the specified structure with the features of this device. */
 	void getFeatures(VkPhysicalDeviceFeatures* features);
 
+  /** Populates the specified structure with the features of this device. */
+  void getFeatures2(VkPhysicalDeviceFeatures2* features);
+  
 	/** Populates the specified structure with the Metal-specific features of this device. */
 	void getMetalFeatures(MVKPhysicalDeviceMetalFeatures* mtlFeatures);
 
 	/** Populates the specified structure with the properties of this device. */
 	void getProperties(VkPhysicalDeviceProperties* properties);
+
+  /** Populates the specified structure with the properties of this device. */
+  void getProperties2(VkPhysicalDeviceProperties2* properties);
 
 	/** Returns whether the specified format is supported on this device. */
 	bool getFormatIsSupported(VkFormat format);
@@ -232,9 +238,9 @@ protected:
 
 	id<MTLDevice> _mtlDevice;
 	MVKInstance* _mvkInstance;
-	VkPhysicalDeviceFeatures _features;
+	VkPhysicalDeviceFeatures2 _features;
 	MVKPhysicalDeviceMetalFeatures _metalFeatures;
-	VkPhysicalDeviceProperties _properties;
+	VkPhysicalDeviceProperties2 _properties;
 	VkPhysicalDeviceMemoryProperties _memoryProperties;
 	std::vector<MVKQueueFamily*> _queueFamilies;
 	uint32_t _allMemoryTypes;
